@@ -20,6 +20,7 @@ TetrisGame::TetrisGame(sf::RenderWindow& window, sf::Sprite& blockSprite, const 
 // - return: nothing
 void TetrisGame::draw() const
 {
+	drawGameboard();
 }
 
 // Event and game loop processing
@@ -137,7 +138,20 @@ void TetrisGame::drawBlock(const Point& topLeft, int xOffset, int yOffset, const
 //   draw a block if it isn't empty.
 // params: none
 // return: nothing
-void TetrisGame::drawGameboard() const {}
+void TetrisGame::drawGameboard() const
+{
+	for (int x{ 0 }; x < Gameboard::MAX_X; x++)
+	{
+		for (int y{ 0 }; y < Gameboard::MAX_Y; y++)
+		{
+			int point_content{ board.getContent(x, y) };
+			if (point_content != Gameboard::EMPTY_BLOCK)
+			{
+				drawBlock(gameboardOffset, x, y, static_cast<TetColor>(point_content));
+			}
+		}
+	}
+}
 
 // Draw a tetromino on the window
 //	 Iterate through each mapped loc & drawBlock() for each.
