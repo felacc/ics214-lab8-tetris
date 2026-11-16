@@ -1,6 +1,8 @@
 #include "Tetromino.h"
 #include <iostream>
 #include <vector>
+#include <cstdlib>
+#include "Point.h"
 
 Tetromino::Tetromino()
 {
@@ -107,4 +109,9 @@ void Tetromino::printToConsole() const
 		}
 		std::cout << '\n';
 	}
+}
+
+TetShape Tetromino::getRandomShape()
+{
+	return static_cast<TetShape>(std::rand() % static_cast<int>(TetShape::COUNT));
 }

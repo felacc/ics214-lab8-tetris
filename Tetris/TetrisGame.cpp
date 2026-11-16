@@ -10,7 +10,8 @@ const double TetrisGame::MIN_SECONDS_PER_TICK = 0.20; // the fastest "tick" rate
 TetrisGame::TetrisGame(sf::RenderWindow& window, sf::Sprite& blockSprite, const Point& gameboardOffset, const Point& nextShapeOffset) 
 	: window( window ), blockSprite( blockSprite ), gameboardOffset( gameboardOffset ), nextShapeOffset( nextShapeOffset )
 { 
-
+	//currentShape.setShape(Tetromino::getRandomShape());
+	//currentShape.setGridLoc(board.getSpawnLoc());
 }
 
 // Draw anything to do with the game,
@@ -20,7 +21,7 @@ TetrisGame::TetrisGame(sf::RenderWindow& window, sf::Sprite& blockSprite, const 
 // - return: nothing
 void TetrisGame::draw() const
 {
-	drawGameboard();
+	//drawTetromino(currentShape, gameboardOffset);
 }
 
 // Event and game loop processing
@@ -160,7 +161,12 @@ void TetrisGame::drawGameboard() const
 // param 1: GridTetromino tetromino
 // param 2: Point topLeft
 // return: nothing
-void TetrisGame::drawTetromino(const GridTetromino& tetromino, const Point& topLeft) const {}
+void TetrisGame::drawTetromino(const GridTetromino& tetromino, const Point& topLeft) const {
+	for (auto loc : tetromino.getBlockLocsMappedToGrid()) 
+	{
+		drawBlock(topLeft, loc.getX(), loc.getY(), tetromino.getColor());
+	}
+}
 
 // update the score display
 // form a string "score: ##" to display the current score

@@ -2,12 +2,17 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 #include "TetrisGame.h"
 #include "TestSuite.h"
 
 
 int main()
 {	
+	// seed randomizer
+	std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
 	// run some sanity tests on our classes to ensure they're working as expected.
 	TestSuite::runTestSuite();
 

@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <cstdlib>
 #include "Point.h"
 
 enum class TetColor
@@ -11,6 +12,8 @@ enum class TetColor
 	BLUE_LIGHT,
 	BLUE_DARK,
 	PURPLE,
+
+	COUNT
 };
 
 enum class TetShape
@@ -22,6 +25,8 @@ enum class TetShape
 	O,
 	I,
 	T,
+
+	COUNT
 };
 
 class Tetromino
@@ -45,5 +50,7 @@ public:
 	void rotateClockwise();
 
 	void printToConsole() const;
+
+	static TetShape getRandomShape();
 };
 
