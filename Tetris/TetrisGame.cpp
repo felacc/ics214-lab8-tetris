@@ -18,7 +18,7 @@ TetrisGame::TetrisGame(sf::RenderWindow& window, sf::Sprite& blockSprite, const 
 //   called every game loop
 // - params: none
 // - return: nothing
-void TetrisGame::draw()
+void TetrisGame::draw() const
 {
 }
 
@@ -118,14 +118,26 @@ void TetrisGame::lock(GridTetromino& shape) {}
 // param 3: int yOffset
 // param 4: TetColor color
 // return: nothing
-void TetrisGame::drawBlock(Point& topLeft, int xOffset, int yOffset, TetColor& color) {}
+void TetrisGame::drawBlock(const Point& topLeft, int xOffset, int yOffset, const TetColor& color) const
+{
+	const int colorInt = static_cast<int>(color);
+	const int tileXOffset = colorInt * 32;
+	const int tileYOffset = 0;
+
+	const int xPosition = topLeft.getX() + xOffset * BLOCK_WIDTH;
+	const int yPosition = topLeft.getY() + yOffset * BLOCK_HEIGHT;
+
+	blockSprite.setTextureRect(sf::IntRect(tileXOffset, tileYOffset, BLOCK_WIDTH, BLOCK_HEIGHT));
+	blockSprite.setPosition(xPosition, yPosition);
+	window.draw(blockSprite);
+}
 									
 // Draw the gameboard blocks on the window
 //   Iterate through each row & col, use drawBlock() to 
 //   draw a block if it isn't empty.
 // params: none
 // return: nothing
-void TetrisGame::drawGameboard() {}
+void TetrisGame::drawGameboard() const {}
 
 // Draw a tetromino on the window
 //	 Iterate through each mapped loc & drawBlock() for each.
@@ -134,7 +146,7 @@ void TetrisGame::drawGameboard() {}
 // param 1: GridTetromino tetromino
 // param 2: Point topLeft
 // return: nothing
-void TetrisGame::drawTetromino(GridTetromino& tetromino, Point& topLeft) {}
+void TetrisGame::drawTetromino(const GridTetromino& tetromino, const Point& topLeft) const {}
 
 // update the score display
 // form a string "score: ##" to display the current score

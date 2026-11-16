@@ -73,7 +73,7 @@ public:
 	//   called every game loop
 	// - params: none
 	// - return: nothing
-	void draw();								
+	void draw() const;								
 
 	// Event and game loop processing
 	// handles keypress events (up, left, right, down, space)
@@ -172,14 +172,14 @@ private:
 	// param 3: int yOffset
 	// param 4: TetColor color
 	// return: nothing
-	void drawBlock(Point& topLeft, int xOffset, int yOffset, TetColor& color);
+	void drawBlock(const Point& topLeft, int xOffset, int yOffset, const TetColor& color) const;
 										
 	// Draw the gameboard blocks on the window
 	//   Iterate through each row & col, use drawBlock() to 
 	//   draw a block if it isn't empty.
 	// params: none
 	// return: nothing
-	void drawGameboard();
+	void drawGameboard() const;
 	
 	// Draw a tetromino on the window
 	//	 Iterate through each mapped loc & drawBlock() for each.
@@ -188,7 +188,7 @@ private:
 	// param 1: GridTetromino tetromino
 	// param 2: Point topLeft
 	// return: nothing
-	void drawTetromino(GridTetromino& tetromino, Point& topLeft);
+	void drawTetromino(const GridTetromino& tetromino, const Point& topLeft) const;
 	
 	// update the score display
 	// form a string "score: ##" to display the current score
