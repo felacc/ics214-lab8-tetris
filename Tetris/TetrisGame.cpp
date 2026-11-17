@@ -12,6 +12,7 @@ TetrisGame::TetrisGame(sf::RenderWindow& window, sf::Sprite& blockSprite, const 
 { 
 	currentShape.setShape(Tetromino::getRandomShape());
 	currentShape.setGridLoc(board.getSpawnLoc());
+
 }
 
 // Draw anything to do with the game,
@@ -243,12 +244,12 @@ bool TetrisGame::isPositionLegal(GridTetromino& shape) const
 bool TetrisGame::isWithinBorders(GridTetromino& shape) const 
 { 
 	int leftBorder = 0;
-	int rightBorder = board.MAX_X;
-	int bottomBorder = board.MAX_Y;
+	int rightBorder = board.MAX_X - 1;
+	int bottomBorder = board.MAX_Y - 1;
 
 	for (Point& loc : shape.getBlockLocsMappedToGrid())
 	{
-		if (!((leftBorder <= loc.getX() && loc.getX() <= rightBorder) && (loc.getY() <= bottomBorder)))
+		if (!(leftBorder <= loc.getX() && loc.getX() <= rightBorder && loc.getY() <= bottomBorder))
 		{
 			return false;
 		}
