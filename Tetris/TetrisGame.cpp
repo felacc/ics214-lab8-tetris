@@ -10,8 +10,8 @@ const double TetrisGame::MIN_SECONDS_PER_TICK = 0.20; // the fastest "tick" rate
 TetrisGame::TetrisGame(sf::RenderWindow& window, sf::Sprite& blockSprite, const Point& gameboardOffset, const Point& nextShapeOffset) 
 	: window( window ), blockSprite( blockSprite ), gameboardOffset( gameboardOffset ), nextShapeOffset( nextShapeOffset )
 { 
-	//currentShape.setShape(Tetromino::getRandomShape());
-	//currentShape.setGridLoc(board.getSpawnLoc());
+	currentShape.setShape(Tetromino::getRandomShape());
+	currentShape.setGridLoc(board.getSpawnLoc());
 }
 
 // Draw anything to do with the game,
@@ -21,14 +21,33 @@ TetrisGame::TetrisGame(sf::RenderWindow& window, sf::Sprite& blockSprite, const 
 // - return: nothing
 void TetrisGame::draw() const
 {
-	//drawTetromino(currentShape, gameboardOffset);
+	drawTetromino(currentShape, gameboardOffset);
 }
 
 // Event and game loop processing
 // handles keypress events (up, left, right, down, space)
 // - param 1: sf::Event event
 // - return: nothing
-void TetrisGame::onKeyPressed(sf::Event& event) {}
+void TetrisGame::onKeyPressed(sf::Event& event) 
+{
+	switch (event.key.code)
+	{
+		case sf::Keyboard::Up:
+			attemptRotate(currentShape);
+			break;
+		case sf::Keyboard::Down:
+			attemptMove(currentShape, 0, 1);
+			break;
+		case sf::Keyboard::Left:
+			attemptMove(currentShape, -1, 0);
+			break;
+		case sf::Keyboard::Right:
+			attemptMove(currentShape, 1, 0);
+			break;
+		default:
+			break;
+	}
+}
 
 // called every game loop to handle ticks & tetromino placement (locking)
 // - param 1: float secondsSinceLastLoop
@@ -72,7 +91,19 @@ bool TetrisGame::spawnNextShape() { return true; }
 //      if so - rotate the original tetromino.
 // - param 1: GridTetromino shape
 // - return: bool, true/false to indicate successful movement
-bool TetrisGame::attemptRotate(GridTetromino& shape) { return true; }
+bool TetrisGame::attemptRotate(GridTetromino& shape) 
+{ 
+	GridTetromino temp = shape;
+	temp.rotateClockwise();
+
+	if (isPositionLegal(temp))
+	{
+		shape.rotateClockwise();
+		return true;
+	}
+
+	return false;
+}
 
 // test if a move is legal on the tetromino, if so, move it.
 //  To do this:
@@ -84,7 +115,20 @@ bool TetrisGame::attemptRotate(GridTetromino& shape) { return true; }
 // - param 2: int x;
 // - param 3: int y;
 // - return: true/false to indicate successful movement
-bool TetrisGame::attemptMove(GridTetromino& shape, int x, int y) { return true; }
+bool TetrisGame::attemptMove(GridTetromino& shape, int x, int y) 
+{ 
+	GridTetromino temp = shape;
+	temp.move(x, y);
+
+	if (isPositionLegal(temp))
+	{
+		shape.move(x, y);
+		return true;
+	}
+
+	return false;
+
+}
 
 // drops the tetromino vertically as far as it can 
 //   legally go.  Use attemptMove(). This can be done in 1 line.
@@ -183,7 +227,10 @@ void TetrisGame::updateScoreDisplay() {}
 // - param 1: GridTetromino shape
 // - return: bool, true if shape is within borders (isWithinBorders()) and 
 //           the shape's mapped board locs are empty (false otherwise).
-bool TetrisGame::isPositionLegal(GridTetromino& shape) const { return true; }
+bool TetrisGame::isPositionLegal(GridTetromino& shape) const 
+{
+	return board.areAllLocsEmpty(shape.getBlockLocsMappedToGrid()) && isWithinBorders(shape);
+}
 
 
 // Determine if the shape is within the left, right, & bottom gameboard borders
@@ -193,7 +240,22 @@ bool TetrisGame::isPositionLegal(GridTetromino& shape) const { return true; }
 // - param 1: GridTetromino shape
 // - return: bool, true if the shape is within the left, right, and lower border
 //	         of the grid, but *NOT* the top border (false otherwise)
-bool TetrisGame::isWithinBorders(GridTetromino& shape) const { return true; }
+bool TetrisGame::isWithinBorders(GridTetromino& shape) const 
+{ 
+	int leftBorder = 0;
+	int rightBorder = board.MAX_X;
+	int bottomBorder = board.MAX_Y;
+
+	for (Point& loc : shape.getBlockLocsMappedToGrid())
+	{
+		if (!((leftBorder <= loc.getX() && loc.getX() <= rightBorder) && (loc.getY() <= bottomBorder)))
+		{
+			return false;
+		}
+	}
+	
+	return true;
+}
 
 
 // set secsPerTick 
