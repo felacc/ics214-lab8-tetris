@@ -12,7 +12,6 @@ TetrisGame::TetrisGame(sf::RenderWindow& window, sf::Sprite& blockSprite, const 
 { 
 	currentShape.setShape(Tetromino::getRandomShape());
 	currentShape.setGridLoc(board.getSpawnLoc());
-
 }
 
 // Draw anything to do with the game,
@@ -37,7 +36,15 @@ void TetrisGame::onKeyPressed(sf::Event& event)
 			attemptRotate(currentShape);
 			break;
 		case sf::Keyboard::Down:
-			attemptMove(currentShape, 0, 1);
+			if (attemptMove(currentShape, 0, 1))
+			{
+
+			}
+			else
+			{
+				lock(currentShape);
+			}
+			
 			break;
 		case sf::Keyboard::Left:
 			attemptMove(currentShape, -1, 0);
@@ -57,7 +64,16 @@ void TetrisGame::onKeyPressed(sf::Event& event)
 // called every game loop to handle ticks & tetromino placement (locking)
 // - param 1: float secondsSinceLastLoop
 // return: nothing
-void TetrisGame::processGameLoop(float secondsSinceLastLoop) {}
+void TetrisGame::processGameLoop(float secondsSinceLastLoop) 
+{
+	secondsSinceLastTick += secondsSinceLastLoop;
+
+	if (secondsSinceLastTick > secondsPerTick)
+	{
+		tick();
+
+	}
+}
 
 // A tick() forces the currentShape to move (if there were no tick,
 // the currentShape would float in position forever). This should
@@ -65,7 +81,19 @@ void TetrisGame::processGameLoop(float secondsSinceLastLoop) {}
 // the currentShape (it can move no further).
 // - params: none
 // - return: nothing
-void TetrisGame::tick() {}
+void TetrisGame::tick() 
+{
+	if (attemptMove(currentShape, 0, 1))
+	{
+	
+	}
+	else
+	{
+		lock(currentShape);
+	}
+
+	secondsSinceLastTick = 0;
+}
 
 // reset everything for a new game (use existing functions) 
 //  - set the score to 0 and call updateScoreDisplay()
