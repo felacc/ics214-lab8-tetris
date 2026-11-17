@@ -1,5 +1,7 @@
 #include "TetrisGame.h"
 #include <SFML/Graphics.hpp>
+#include <vector>
+#include <cassert>
 
 
 const int TetrisGame::BLOCK_WIDTH = 32;			  // pixel width of a tetris block, init to 32
@@ -11,6 +13,16 @@ TetrisGame::TetrisGame(sf::RenderWindow& window, sf::Sprite& blockSprite, const 
 	: window( window ), blockSprite( blockSprite ), gameboardOffset( gameboardOffset ), nextShapeOffset( nextShapeOffset )
 { 
 	reset();
+
+	if (!scoreFont.loadFromFile("fonts/RedOctober.ttf"))
+	{
+		assert(false && "Missing font: RedOctober.ttf");
+	};
+
+	scoreText.setFont(scoreFont);
+	scoreText.setCharacterSize(18);
+	scoreText.setFillColor(sf::Color::White);
+	scoreText.setPosition(425, 325);
 }
 
 // Draw anything to do with the game,
@@ -20,7 +32,10 @@ TetrisGame::TetrisGame(sf::RenderWindow& window, sf::Sprite& blockSprite, const 
 // - return: nothing
 void TetrisGame::draw() const
 {
+	drawGameboard();
 	drawTetromino(currentShape, gameboardOffset);
+	drawTetromino(nextShape, nextShapeOffset);
+	window.draw(scoreText);
 }
 
 // Event and game loop processing
@@ -70,7 +85,44 @@ void TetrisGame::processGameLoop(float secondsSinceLastLoop)
 	if (secondsSinceLastTick > secondsPerTick)
 	{
 		tick();
+	}
 
+	if (shapePlacedSinceLastGameLoop)
+	{
+		shapePlacedSinceLastGameLoop = false;
+
+		if (spawnNextShape())
+		{
+			pickNextShape();
+
+
+			const int completedRows = board.removeCompletedRows();
+
+			switch (completedRows)
+			{
+			case 1:
+				score += 40;
+				break;
+			case 2:
+				score += 100;
+				break;
+			case 3:
+				score += 300;
+				break;
+			case 4:
+				score += 1200;
+				break;
+			default:
+				break;
+			}
+
+			updateScoreDisplay();
+			determineSecondsPerTick();
+		}
+		else
+		{
+			reset();
+		}
 	}
 }
 
@@ -282,7 +334,11 @@ void TetrisGame::drawTetromino(const GridTetromino& tetromino, const Point& topL
 // user scoreText.setString() to display it.
 // params: none:
 // return: nothing
-void TetrisGame::updateScoreDisplay() {}
+void TetrisGame::updateScoreDisplay() 
+{
+	std::string scoreString = "score: " + std::to_string(score);
+	scoreText.setString(scoreString);
+}
 
 // State & gameplay/logic methods ================================
 
@@ -328,5 +384,18 @@ bool TetrisGame::isWithinBorders(GridTetromino& shape) const
 //   - advanced: base it on score (higher score results in lower secsPerTick)
 // params: none
 // return: nothing
-void TetrisGame::determineSecondsPerTick() {}
+void TetrisGame::determineSecondsPerTick() 
+{
+	const int pointsPerSpeedIncrease = 1000;
+	const double secondsDecrement = 0.05;
+
+	const int speedIncreaseCount = score / pointsPerSpeedIncrease;
+
+	secondsPerTick = MAX_SECONDS_PER_TICK - speedIncreaseCount * secondsDecrement;
+
+	if (secondsPerTick < MIN_SECONDS_PER_TICK)
+	{
+		secondsPerTick = MIN_SECONDS_PER_TICK;
+	}
+}
 
