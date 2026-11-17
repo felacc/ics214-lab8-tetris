@@ -45,6 +45,10 @@ void TetrisGame::onKeyPressed(sf::Event& event)
 		case sf::Keyboard::Right:
 			attemptMove(currentShape, 1, 0);
 			break;
+		case::sf::Keyboard::Space:
+			drop(currentShape);
+			lock(currentShape);
+			break;
 		default:
 			break;
 	}
@@ -135,7 +139,13 @@ bool TetrisGame::attemptMove(GridTetromino& shape, int x, int y)
 //   legally go.  Use attemptMove(). This can be done in 1 line.
 // - param 1: GridTetromino shape
 // - return: nothing;
-void TetrisGame::drop(GridTetromino& shape) {}
+void TetrisGame::drop(GridTetromino& shape)
+{
+	while (attemptMove(shape, 0, 1))
+	{
+		// keep moving down
+	}
+}
 
 // copy the contents (color) of the tetromino's mapped block locs to the grid.
 	//	 1) get the tetromino's mapped locs via tetromino.getBlockLocsMappedToGrid()
@@ -144,7 +154,17 @@ void TetrisGame::drop(GridTetromino& shape) {}
 	//      to true
 	// - param 1: GridTetromino shape
 	// - return: nothing
-void TetrisGame::lock(GridTetromino& shape) {}
+void TetrisGame::lock(GridTetromino& shape) 
+{
+	std::vector<Point> locs = shape.getBlockLocsMappedToGrid();
+
+	for (auto loc : locs)
+	{
+		board.setContent(loc, static_cast<int>(shape.getColor()));
+	}
+
+	shapePlacedSinceLastGameLoop = true;
+}
 
 // Graphics methods ==============================================
 
