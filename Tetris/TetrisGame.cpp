@@ -10,8 +10,7 @@ const double TetrisGame::MIN_SECONDS_PER_TICK = 0.20; // the fastest "tick" rate
 TetrisGame::TetrisGame(sf::RenderWindow& window, sf::Sprite& blockSprite, const Point& gameboardOffset, const Point& nextShapeOffset) 
 	: window( window ), blockSprite( blockSprite ), gameboardOffset( gameboardOffset ), nextShapeOffset( nextShapeOffset )
 { 
-	currentShape.setShape(Tetromino::getRandomShape());
-	currentShape.setGridLoc(board.getSpawnLoc());
+	reset();
 }
 
 // Draw anything to do with the game,
@@ -103,18 +102,35 @@ void TetrisGame::tick()
 //  - pick next shape again (for the "on-deck" shape)
 // - params: none
 // - return: nothing
-void TetrisGame::reset() {}
+void TetrisGame::reset() 
+{
+	score = 0;
+	updateScoreDisplay();
+	determineSecondsPerTick();
+	board.empty();
+	pickNextShape();
+	spawnNextShape();
+}
 
 // assign nextShape.setShape a new random shape  
 // - params: none
 // - return: nothing
-void TetrisGame::pickNextShape() {}
+void TetrisGame::pickNextShape() 
+{
+	nextShape.setShape(Tetromino::getRandomShape());
+}
 
 // copy the nextShape into the currentShape (through assignment)
 //   position the currentShape to its spawn location.
 // - params: none
 // - return: bool, true/false based on isPositionLegal()
-bool TetrisGame::spawnNextShape() { return true; }
+bool TetrisGame::spawnNextShape() 
+{
+	currentShape = nextShape;
+	currentShape.setGridLoc(board.getSpawnLoc());
+
+	return isPositionLegal(currentShape);
+}
 
 // Test if a rotation is legal on the tetromino and if so, rotate it. 
 //  To accomplish this:
